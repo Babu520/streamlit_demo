@@ -371,7 +371,7 @@ def fix_missing_rows(data,all_lable=False):
 @st.cache_data
 def get_data():
     FILE_PATH = glob.glob(os.path.join(
-        'D:/side_project/tk_test_1023/Api Data/*.csv'))
+        './api data/*.csv'))
     df_from_each_file = (pd.read_csv(f, delimiter=',', index_col=0)
                          for f in FILE_PATH)
     df = pd.concat(df_from_each_file, ignore_index=True)
