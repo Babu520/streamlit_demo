@@ -380,17 +380,17 @@ def get_data():
 
 TEAMS_STYLE = [
     ['Braves',   ['#0080FF', '#46A3FF', '#84C1FF', '#97CBFF', '#ACD6FF',
-                  '#D2E9FF', '#ECF5FF'], 'D:/side_project/tk_test_1023/Logo/BRAVES_LOGO.png', 0.5],
+                  '#D2E9FF', '#ECF5FF'], './logo/BRAVES_LOGO.png', 0.5],
     ['Kings',    ['#FFC71F', '#FFFF37', '#FFFF5C', '#FFFF80', '#FFFFB3', '#FFFFD6',
-                  '#FFFFF0'], 'D:/side_project/tk_test_1023/Logo/KINGS_LOGO.png', 0.22],
+                  '#FFFFF0'], './logo/KINGS_LOGO.png', 0.22],
     ['Pilots',   ['#D14200', '#FF5405', '#FF7738', '#FF9A6B', '#FFBD9E', '#FFE0D1',
-                  '#FFF8F5'], 'D:/side_project/tk_test_1023/Logo/PILOTS_LOGO.png', 0.6],
+                  '#FFF8F5'], './logo/PILOTS_LOGO.png', 0.6],
     ['Lioneers', ['#7000D1', '#8A05FF', '#A238FF', '#BA6BFF', '#D29EFF', '#EAD1FF',
-                  '#FAF5FF'], 'D:/side_project/tk_test_1023/Logo/LIONEERS_LOGO.png', 0.6],
+                  '#FAF5FF'], './logo/LIONEERS_LOGO.png', 0.6],
     ['Dreamers', ['#006327', '#008A37', '#00CC5E', '#3FD97D', '#A6EDC2', '#D4F7E2',
-                  '#EAFBF1'], 'D:/side_project/tk_test_1023/Logo/DREAMERS_LOGO.png', 0.4],
+                  '#EAFBF1'], './logo/DREAMERS_LOGO.png', 0.4],
     ['Steelers', ['#AE0000', '#FF0505', '#FF3838', '#FF6B6B', '#FF9E9E', '#FFD1D1',
-                  '#FFF5F5'], 'D:/side_project/tk_test_1023/Logo/STEELERS_LOGO.png', 0.5]
+                  '#FFF5F5'], './logo/STEELERS_LOGO.png', 0.5]
 ]
 
 try:
