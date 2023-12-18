@@ -17,10 +17,10 @@ st.markdown(
 )
 
 from PIL import Image
-img_test = Image.open("D:/side_project/tk_test_1023/column_info.jpg")
+img_test = Image.open('./images/column_info.jpg')
 # st.image(img_test)
 
-img_test2 = Image.open("D:/side_project/tk_test_1023/shot_zone_custom_demo.jpg")
+img_test2 = Image.open('./images/shot_zone_custom_demo.jpg')
 # st.image(img_test2)
 
 images = [img_test,img_test2]
