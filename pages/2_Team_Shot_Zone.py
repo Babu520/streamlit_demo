@@ -9,15 +9,16 @@ from matplotlib.patches import Circle, Rectangle, Arc, ConnectionPatch, Polygon
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+
 
 st.set_page_config(
     page_title="Team Shot Zone",
     page_icon="👥",
 )
 
-st.write("# Welcome to Streamlit! 👋"
-         )
-
+st.write("# Welcome to Streamlit! 👋")
 
 def shot_chart(data, title="", color="b",
                xlim=(-250, 250), ylim=(422.5, -47.5), line_color="#D3D3D3",
@@ -337,19 +338,16 @@ def draw_court(ax=None, color="blue", lw=1, shotzone=True, outer_lines=False, zo
     from PIL import Image
 
     logo = Image.open(TEAMS_LOGO)
-    imagebox = OffsetImage(logo, zoom=TEAMS_LOGO_RATION)
+    imagebox = OffsetImage(logo, zoom=TEAMS_LOGO_RATIO)
     # imagebox = OffsetImage(logo)
     ab = AnnotationBbox(imagebox, (0, 380), frameon=False)
     ax.add_artist(ab)
 
     return ax
 
-def fix_missing_rows(data,all_lable=False):
-    if all_lable :
-        COLUMNS = ['SHOT_ZONE_CUTSOM','SUM_SMF','COUNT_SMF','FPG']
-    else:
-        COLUMNS = ['GAME_ID','SHOT_ZONE_CUTSOM','SUM_SMF','COUNT_SMF','FPG']
+def fix_missing_rows(data):
 
+    COLUMNS = ['SHOT_ZONE_CUTSOM','SUM_SMF','COUNT_SMF','FPG']
     now_list = data['SHOT_ZONE_CUTSOM'].values.tolist()
     standard_list= ['8 ft. 2','Center 16 ft. 2','Center 2','Center 3','Left 16 ft. 2','Left Center 2','Left Center 3',
                 'Left Coner 2','Left Coner 3','Right 16 ft. 2','Right Center 2','Right Center 3','Right Coner 2','Right Coner 3']
@@ -358,10 +356,9 @@ def fix_missing_rows(data,all_lable=False):
     
     df_missing = pd.DataFrame(columns=COLUMNS)
     for missing_part in missing_list:
-        if all_lable :
-            df_missing = pd.concat([pd.DataFrame([[missing_part,0,0,0.0]], columns=COLUMNS), df_missing], ignore_index=True)
-        else:
-            df_missing = pd.concat([pd.DataFrame([[game_number,missing_part,0,0,0.0]], columns=COLUMNS), df_missing], ignore_index=True)
+        df_missing = pd.concat([pd.DataFrame([[missing_part,0,0,0.0]], columns=COLUMNS), df_missing], ignore_index=True)
+        # else:
+            # df_missing = pd.concat([pd.DataFrame([[game_number,missing_part,0,0,0.0]], columns=COLUMNS), df_missing], ignore_index=True)
     
     data = pd.concat([data,df_missing], ignore_index=True)
     result = data.sort_values(by=['SHOT_ZONE_CUTSOM'])
@@ -393,50 +390,61 @@ TEAMS_STYLE = [
                   '#FFF5F5'], './logo/STEELERS_LOGO.png', 0.5]
 ]
 
+# 🟥🟨🟦🟪🟩🟧
+
+GAME_ID_INFO = [
+    ['Braves',  ['G01 🟨🟦','G02 🟥🟦','G05 🟦🟩','G10 🟦🟪','G11 🟦🟩','G15 🟦🟥','G20 🟥🟦','G22 🟪🟦'] ],
+    ['Kings' ,  ['G01 🟨🟦','G04 🟪🟨','G06 🟧🟨','G07 🟧🟨','G09 🟥🟨','G14 🟨🟥','G16 🟨🟧','G21 🟨🟧'] ],
+    ['Pilots' , ['G06 🟧🟨','G07 🟧🟨','G12 🟧🟥','G16 🟨🟧','G18 🟪🟧','G19 🟩🟧','G21 🟨🟧'] ],
+    ['Lioneers',['G04 🟪🟨','G08 🟩🟪','G10 🟦🟪','G13 🟪🟩','G18 🟪🟧','G22 🟪🟦'] ],
+    ['Dreamers',['G03 🟥🟩','G05 🟦🟩','G08 🟩🟪','G11 🟦🟩','G13 🟪🟩','G17 🟩🟥','G19 🟩🟧'] ],
+    ['Steelers',['G02 🟥🟦','G03 🟥🟩','G09 🟥🟨','G12 🟧🟥','G14 🟨🟥','G15 🟦🟥','G17 🟩🟥','G20 🟥🟦'] ],
+]
+
+
 try:
     global teams
     teams = st.sidebar.selectbox(
-        "Choose teams", ['Braves', 'Kings', 'Pilots','Lioneers', 'Dreamers', 'Steelers'], index=None
-    )
-    global game_number
-
-    game_number = st.sidebar.selectbox(
-        "Choose Game Number", ['ALL', 'G01', 'G02', 'G03', 'G04', 'G05', 'G06', 'G07', 'G08', 'G09', 'G10',
-                               'G11', 'G12', 'G13', 'G14', 'G15', 'G16', 'G17', 'G18', 'G19', 'G20'], index=None
-    )
+        "Choose teams", ['Braves', 'Kings', 'Pilots','Lioneers', 'Dreamers', 'Steelers'], index=None)
     
-    player_id = st.sidebar.text_input('pls input player number')
-
     if not teams:
         st.error("Please select one team.")
+    else :
+        global game_number
+        game_id_info = [ x for x in GAME_ID_INFO if x[0] == str(teams)]
+        all = st.sidebar.checkbox("Select all games")
+
+        if all:
+            game_number = st.sidebar.multiselect("Choose Game Numbers", game_id_info[0][1],game_id_info[0][1])
+        else:
+            game_number = st.sidebar.multiselect("Choose Game Numbers", game_id_info[0][1])
+
+        game_number = [item.split(' ')[0] for item in game_number]
+
+        player_id = st.sidebar.text_input('pls input player number')
+
 
     with st.form(key='my_form'):
         submit_button = st.form_submit_button(label='Submit')
-        # TEAMS_COLOR='white'
+
         if submit_button:
-            print('------------------------')
-
             df = get_data()
-            if teams:
-                TEAM_STYLE_INFO = [
-                    x for x in TEAMS_STYLE if x[0] == str(teams)]
-                TEAMS_COLOR = TEAM_STYLE_INFO[0][1]
-                TEAMS_LOGO = TEAM_STYLE_INFO[0][2]
-                TEAMS_LOGO_RATION = TEAM_STYLE_INFO[0][3]
 
-            if game_number == 'ALL':
-                FILTER_COL1 = ['TEAM_NAME', 'SHOT_ZONE_CUTSOM']
-                FILTER_COL2 = ['TEAM_NAME','SHOT_ZONE_CUTSOM', 'SUM_SMF', 'COUNT_SMF']
-                FILTER_COL3 = ['SHOT_ZONE_CUTSOM']
-                SELECT_QUERY = "TEAM_NAME=='" + str(teams) + "'"
-                if player_id :
-                    SELECT_QUERY = "TEAM_NAME=='" + str(teams) + "' and PLAYER_ID=='#" + str(player_id) + "'"
+            if teams:
+                TEAM_STYLE_INFO = [x for x in TEAMS_STYLE if x[0] == str(teams)]
+                TEAMS_COLOR = TEAM_STYLE_INFO[0][1]
+                TEAMS_LOGO  = TEAM_STYLE_INFO[0][2]
+                TEAMS_LOGO_RATIO = TEAM_STYLE_INFO[0][3]
+
+            FILTER_COL1 = ['TEAM_NAME', 'SHOT_ZONE_CUTSOM']
+            FILTER_COL2 = ['TEAM_NAME','SHOT_ZONE_CUTSOM', 'SUM_SMF', 'COUNT_SMF']
+            FILTER_COL3 = ['SHOT_ZONE_CUTSOM']
+
+            if player_id :
+                SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "' and PLAYER_ID=='#" + str(player_id) + "'"
 
             else:
-                FILTER_COL1 = ['GAME_ID', 'TEAM_NAME', 'SHOT_ZONE_CUTSOM']
-                FILTER_COL2 = ['GAME_ID', 'TEAM_NAME','SHOT_ZONE_CUTSOM', 'SUM_SMF', 'COUNT_SMF']
-                FILTER_COL3 = ['GAME_ID', 'SHOT_ZONE_CUTSOM']
-                SELECT_QUERY = "GAME_ID=='" + str(game_number) + "' and TEAM_NAME=='" + str(teams) + "'"
+                SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "'"
 
 
             df2 = df.query(SELECT_QUERY)
@@ -450,9 +458,6 @@ try:
             test_df['FPG'] = test_df['SUM_SMF'] / test_df['COUNT_SMF']
             
             if test_df.shape[0] != 14:
-                if game_number == 'ALL':
-                    test_df = fix_missing_rows(test_df,True)
-                else:
                     test_df = fix_missing_rows(test_df)
 
             conditions = [
@@ -482,9 +487,9 @@ try:
             plt.rcParams['figure.figsize'] = (12, 11)
 
             if player_id :
-                TITLE = teams + '_' +  game_number + '_#' + player_id 
+                TITLE = teams + '_' +  str(game_number) + '_#' + player_id 
             else:
-                TITLE = teams + '_' +  game_number
+                TITLE = teams + '_' +  str(game_number)
 
             shot_chart(demo, title=TITLE,zone_colors=color_map, texts=fpg_list)
 
