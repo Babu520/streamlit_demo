@@ -18,7 +18,7 @@ st.set_page_config(
     page_icon="👥",
 )
 
-st.write("# Welcome to Streamlit! 👋")
+st.write("# Welcome to Shot Zone Stat ! 👋")
 
 def shot_chart(data, title="", color="b",
                xlim=(-250, 250), ylim=(422.5, -47.5), line_color="#D3D3D3",
@@ -38,7 +38,7 @@ def shot_chart(data, title="", color="b",
         ax.set_ylim(ylim[::-1])
 
     ax.tick_params(labelbottom="off", labelleft="off")
-    ax.set_title(title, fontsize=18)
+    ax.set_title(title, pad=20,fontsize=18)
 
     # draws the court
     draw_court(ax, color=line_color, lw=court_lw,
@@ -401,6 +401,15 @@ GAME_ID_INFO = [
     ['Steelers',['G02 🟥🟦','G03 🟥🟩','G09 🟥🟨','G12 🟧🟥','G14 🟨🟥','G15 🟦🟥','G17 🟩🟥','G20 🟥🟦'] ],
 ]
 
+TEAM_PLAYER_ID_INFO = [
+    ['Braves',  [' ','#0','#1','#2','#3','#5','#6','#7','#8','#9','#10','#11','#12','#13','#14','#15','#17','#21','#24','#32','#33','#99'] ],
+    ['Kings' ,  [' ','#0','#1','#2','#3','#4','#5','#6','#7','#9','#10','#11','#14','#17','#19','#24','#33','#49','#50','#55','#72'] ],
+    ['Pilots' , [' ','#0','#1','#2','#3','#5','#6','#7','#9','#10','#12','#25','#27','#30','#42','#55','#69'] ],
+    ['Lioneers',[' ','#0','#1','#2','#3','#4','#5','#6','#7','#8','#9','#11','#12','#17','#20','#21','#23','#24','#31','#32','#42','#55'] ],
+    ['Dreamers',[' ','#0','#3','#5','#6','#7','#8','#10','#11','#18','#21','#23','#24','#26','#28','#30','#34','#42','#88']],
+    ['Steelers',[' ','#0','#1','#2','#3','#4','#6','#8','#11','#13','#15','#18','#20','#24','#28','#30','#34','#35','#77'] ],
+]
+
 
 try:
     global teams
@@ -421,11 +430,14 @@ try:
 
         game_number = [item.split(' ')[0] for item in game_number]
 
-        player_id = st.sidebar.text_input('pls input player number')
+        player_id_info = [ x for x in TEAM_PLAYER_ID_INFO if x[0] == str(teams)]
+        player_id = st.sidebar.multiselect('Choose Players',player_id_info[0][1])
+        # player_id = st.sidebar.selectbox('Choose One Player',player_id_info[0][1])
+        # player_id = st.sidebar.text_input('pls input player number')
 
 
     with st.form(key='my_form'):
-        submit_button = st.form_submit_button(label='Submit')
+        submit_button = st.form_submit_button(label='產生')
 
         if submit_button:
             df = get_data()
@@ -440,12 +452,12 @@ try:
             FILTER_COL2 = ['TEAM_NAME','SHOT_ZONE_CUTSOM', 'SUM_SMF', 'COUNT_SMF']
             FILTER_COL3 = ['SHOT_ZONE_CUTSOM']
 
-            if player_id :
-                SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "' and PLAYER_ID=='#" + str(player_id) + "'"
+            if len(player_id) != 0:
+                SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "' and PLAYER_ID in " + str(player_id) + " "
+                # SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "' and PLAYER_ID=='#" + str(player_id) + "'"
 
             else:
                 SELECT_QUERY = "GAME_ID in " + str(game_number) + " and TEAM_NAME=='" + str(teams) + "'"
-
 
             df2 = df.query(SELECT_QUERY)
             df2['SUM_SMF'] = df2.groupby(FILTER_COL1)['SHOT_MADE_FLAG'].transform('sum')
@@ -486,8 +498,8 @@ try:
             # Set the size for our plots
             plt.rcParams['figure.figsize'] = (12, 11)
 
-            if player_id :
-                TITLE = teams + '_' +  str(game_number) + '_#' + player_id 
+            if len(player_id) != 0:
+                TITLE = teams + '_' +  str(game_number) + '_' + str(player_id)
             else:
                 TITLE = teams + '_' +  str(game_number)
 
