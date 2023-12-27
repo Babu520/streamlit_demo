@@ -26,7 +26,24 @@ st.set_page_config(
     page_icon="🏠",
 )
 
-st.title('👋👋👋')
+st.title('更新資訊')
+
+st.markdown(
+    """
+    ## 2023-12-27
+        - [數據] 比賽場次 G25 G26 G27 G28 已上傳
+        - [修正] 球員號碼檢索體驗 ( 球員號碼 -> 球員號碼 中文名字)
+
+        by BBG(小管)
+    
+    ## 操作說明
+    """
+)
+
+from PIL import Image
+img_test = Image.open('./images/demo_ui.jpg')
+
+st.image(img_test, use_column_width=True)
 
 try:
     print('hello')
