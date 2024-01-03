@@ -26,23 +26,25 @@ st.set_page_config(
     page_icon="🏠",
 )
 
-st.title('更新資訊')
+from PIL import Image
+img_test = Image.open("./images/2024-01-03.jpg")
+st.image(img_test, use_column_width=True)
 
+st.title('更新資訊')
 st.markdown(
     """
-    ## 2023-12-27
-        - [數據] 比賽場次 G25 G26 G27 G28 已上傳
-        - [修正] 球員號碼檢索體驗 ( 球員號碼 -> 球員號碼 中文名字)
+    ## 2023-12-28
+        - [數據] 比賽場次 G29 G30 G31 G32
+        - [修正] {Team Shot Zone}球員名稱錯誤(#42 沃許本)
+        - [新增] {Rank} 各投籃區域排名
 
         by BBG(小管)
-    
     ## 操作說明
     """
 )
 
-from PIL import Image
-img_test = Image.open('./images/demo_ui.jpg')
 
+img_test = Image.open('./images/demo_ui.jpg')
 st.image(img_test, use_column_width=True)
 
 try:
